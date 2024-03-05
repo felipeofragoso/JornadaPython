@@ -38,7 +38,7 @@ pyautogui.click(x=935, y=711)
 time.sleep(3)
 
 # Passo 3: Importar a base de dados
-# pip install andas numpy openpyxl
+# pip install pandas numpy openpyxl
 import pandas
 
 tabela = pandas.read_csv("produtos.csv")
