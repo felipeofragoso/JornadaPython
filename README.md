@@ -1,2 +1,2 @@
 # JornadaPython
-Repositório para armazernar os 4 projetos da Jornada Python da Hashtag
+Repositório para armazenar os 4 projetos da Jornada Python da Hashtag
