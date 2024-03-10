@@ -1,89 +1,84 @@
-# Hashzap
-# botao de iniciar chat
-# popup para entrar no chat
-# quando entrar no chat: (aparece para todo mundo)
-    # a mensagem que você entrou no chat
-    # o campo e o botão de enviar mensagem
-# a cada mensagem que você envia (aparece para todo mundo)
-    # Nome: Texto da Mensagem
+# Título: Hashzap
+# Botão de iniciar o chat
+    # clicou no botão
+        # popup / modal
+          # Título: Bem vindo ao Hashzap
+          # campo: escreva seu nome no chat
+          # botão: entrar no chat
+# chat
+# embaixo do chat
+    # campo de Digite sua mensagem
+    # botão de enviar
 
+# flet -> framework do Python
+# pip install flet
 
-# produto = {
-#     "nome": "iphone",
-#     "preço": 6500,
-#     "quantidade": 150    
-# }
+import flet as ft # importar
 
-# produto["quantidade"]
-
-import flet as ft
-
-def main(pagina):
+def main(pagina): # criar a função principal/main
     texto = ft.Text("Hashzap")
-
+    
     chat = ft.Column()
-
-    nome_usuario = ft.TextField(label="Escreva seu nome")
-
+    
     def enviar_mensagem_tunel(mensagem):
-        tipo = mensagem["tipo"]
-        if tipo == "mensagem":
-            texto_mensagem = mensagem["texto"]
-            usuario_mensagem = mensagem["usuario"]
-            # adicionar a mensagem no chat
-            chat.controls.append(ft.Text(f"{usuario_mensagem}: {texto_mensagem}"))
-        else:
-            usuario_mensagem = mensagem["usuario"]
-            chat.controls.append(ft.Text(f"{usuario_mensagem} entrou no chat", 
-                                         size=12, italic=True, color=ft.colors.ORANGE_500))
+        print(mensagem)
+        # adicionar mensagem no chat
+        texto_mensagem = ft.Text(mensagem)
+        chat.controls.append(texto_mensagem)
         pagina.update()
 
     pagina.pubsub.subscribe(enviar_mensagem_tunel)
 
     def enviar_mensagem(evento):
-        pagina.pubsub.send_all({"texto": campo_mensagem.value, "usuario": nome_usuario.value,
-                                "tipo": "mensagem"})
-        # limpar o campo de mensagem
+        print("Enviar mensagem")
+        pagina.pubsub.send_all(f"{nome_usuario.value}: {campo_mensagem.value}")
+        # limpar o campo mensagem
         campo_mensagem.value = ""
         pagina.update()
 
-    campo_mensagem = ft.TextField(label="Digite uma mensagem", on_submit=enviar_mensagem)
-    botao_enviar_mensagem = ft.ElevatedButton("Enviar", on_click=enviar_mensagem)
+    
 
-    def entrar_popup(evento):
-        pagina.pubsub.send_all({"usuario": nome_usuario.value, "tipo": "entrada"})
-        # adicionar o chat
-        pagina.add(chat)
-        # fechar o popup
-        popup.open = False
-        # remover o botao iniciar chat
-        pagina.remove(botao_iniciar)
-        pagina.remove(texto)
-        # criar o campo de mensagem do usuario
-        # criar o botao de enviar mensagem do usuario
-        pagina.add(ft.Row(
-            [campo_mensagem, botao_enviar_mensagem]
-        ))
-        pagina.update()
-
-    popup = ft.AlertDialog(
-        open=False, 
-        modal=True,
-        title=ft.Text("Bem vindo ao Hashzap"),
-        content=nome_usuario,
-        actions=[ft.ElevatedButton("Entrar", on_click=entrar_popup)],
-        )
+    campo_mensagem = ft.TextField(label="Digite sua mensagem", on_submit=enviar_mensagem)
+    botao_enviar = ft.ElevatedButton("Enviar", on_click=enviar_mensagem)
+    linha_enviar = ft.Row([campo_mensagem, botao_enviar])
 
     def entrar_chat(evento):
+        print("Entrar no chat")
+        # fechar o popup
+        popup.open = False
+        # tirar o botão iniciar chat
+        pagina.remove(botao_iniciar)
+        # tirar o titulo hashzap
+        pagina.remove(texto)
+        # criar o chat
+        pagina.add(chat)
+        pagina.pubsub.send_all(f"{nome_usuario.value} entrou no chat") 
+        # colocar o campo de digitar mensagem
+        # criar o botão de enviar
+        pagina.add(linha_enviar)
+        pagina.update()
+    titulo_popup = ft.Text("Bem vindo ao Hashzap")
+    nome_usuario = ft.TextField(label="Escreva seu nome no chat")
+    botao_entrar = ft.ElevatedButton("Entrar no chat", on_click=entrar_chat)
+    popup = ft.AlertDialog(
+        open=False,  
+        modal=True,
+        title=titulo_popup,
+        content=nome_usuario,
+        actions=[botao_entrar]
+    )
+
+    def abrir_popup(evento):
         pagina.dialog = popup
         popup.open = True
         pagina.update()
-
-    botao_iniciar = ft.ElevatedButton("Iniciar chat", on_click=entrar_chat)
+    
+    botao_iniciar = ft.ElevatedButton("Iniciar Chat", on_click=abrir_popup)
 
     pagina.add(texto)
     pagina.add(botao_iniciar)
 
-ft.app(target=main, view=ft.WEB_BROWSER, port=8000)
+ft.app(target=main, view=ft.WEB_BROWSER) # criar o app chamando a função   
 
-# deploy
+
+
